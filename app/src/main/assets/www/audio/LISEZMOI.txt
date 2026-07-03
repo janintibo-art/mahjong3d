@@ -1,0 +1,4 @@
+Déposez ici votre musique de fond sous le nom exact :  music.mp3
+Le jeu la détectera automatiquement et le réglage "Musique"
+apparaîtra dans l'écran Réglages. Les bruitages, eux, sont
+générés par le jeu, aucun fichier n'est nécessaire.

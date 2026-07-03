@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Tuile ivoire inclinée -->
+    <group android:rotation="-8" android:pivotX="54" android:pivotY="54">
+        <!-- épaisseur -->
+        <path android:fillColor="#B99E6A"
+            android:pathData="M36,26 h36 a8,8 0 0 1 8,8 v44 a8,8 0 0 1 -8,8 h-36 a8,8 0 0 1 -8,-8 v-44 a8,8 0 0 1 8,-8 z"/>
+        <!-- face -->
+        <path android:fillColor="#F7F0DC"
+            android:pathData="M34,22 h36 a8,8 0 0 1 8,8 v44 a8,8 0 0 1 -8,8 h-36 a8,8 0 0 1 -8,-8 v-44 a8,8 0 0 1 8,-8 z"/>
+        <!-- motif : dragon rouge stylisé (cercle + barre) -->
+        <path android:fillColor="#C43D2E"
+            android:pathData="M52,36 a12,12 0 1 0 0.001,0 z M49,58 h6 v14 h-6 z"/>
+        <!-- éclat jade -->
+        <path android:fillColor="#35D99A"
+            android:pathData="M40,30 l3,-6 3,6 6,3 -6,3 -3,6 -3,-6 -6,-3 z"/>
+    </group>
+</vector>
