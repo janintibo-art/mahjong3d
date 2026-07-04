@@ -6,14 +6,9 @@
 <title>MahJong 3D</title>
 <style>
 /* ============================================================
-   MAHJONG 3D — feuille de style
-   Thèmes pilotés par variables CSS sur <body data-theme="...">
+   MAHJONG 3D v2
    ============================================================ */
-:root{
-  --tile-w: 62px;
-  --tile-h: 84px;
-  --tile-d: 14px;   /* épaisseur d'un étage */
-}
+:root{ --tile-w:62px; --tile-h:84px; --tile-d:14px; }
 [data-theme="jade"]{
   --bg1:#07211a; --bg2:#0d3a2c; --panel:#0b2e24; --panel2:#104032;
   --accent:#35d99a; --accent2:#e8b44a; --danger:#e2543f;
@@ -54,8 +49,7 @@ html,body{height:100%;overflow:hidden;}
 body{
   font-family:'Avenir Next','Segoe UI',system-ui,sans-serif;
   background:linear-gradient(170deg,var(--bg1),var(--bg2) 60%,var(--bg1));
-  color:var(--txt);
-  transition:background .6s;
+  color:var(--txt); transition:background .6s;
 }
 button{font-family:inherit;}
 
@@ -68,7 +62,7 @@ button{font-family:inherit;}
 
 /* ---------- accueil ---------- */
 #home{justify-content:flex-start;gap:14px;}
-.logo{margin-top:5vh;text-align:center;perspective:600px;}
+.logo{margin-top:4vh;text-align:center;perspective:600px;}
 .logo h1{
   font-family:Georgia,'Times New Roman',serif;font-size:clamp(38px,11vw,64px);
   letter-spacing:.12em;font-weight:700;
@@ -79,7 +73,7 @@ button{font-family:inherit;}
 }
 .logo .sub{letter-spacing:.5em;font-size:12px;color:var(--txt-dim);margin-top:4px;text-transform:uppercase;}
 @keyframes logoFloat{0%,100%{transform:rotateX(12deg) translateY(0)}50%{transform:rotateX(12deg) translateY(-8px)}}
-.logo-tiles{display:flex;gap:10px;justify-content:center;margin-top:16px;perspective:500px;}
+.logo-tiles{display:flex;gap:10px;justify-content:center;margin-top:14px;perspective:500px;}
 .logo-tiles .mini{
   width:46px;height:62px;border-radius:7px;
   background:linear-gradient(160deg,var(--tile-face),var(--tile-face2));
@@ -91,6 +85,10 @@ button{font-family:inherit;}
 .logo-tiles .mini:nth-child(2){animation-delay:.5s}
 .logo-tiles .mini:nth-child(3){animation-delay:1s}
 @keyframes miniSpin{0%,100%{transform:rotateY(-14deg) rotateX(10deg)}50%{transform:rotateY(14deg) rotateX(10deg) translateY(-6px)}}
+/* réduction de mouvement : on ne coupe QUE l'ambiance, jamais le gameplay */
+@media (prefers-reduced-motion: reduce){
+  .logo h1,.logo-tiles .mini{animation:none;}
+}
 
 .card{width:min(440px,100%);background:linear-gradient(180deg,var(--panel2),var(--panel));
   border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:14px 16px;
@@ -115,28 +113,41 @@ button{font-family:inherit;}
 
 /* ---------- jeu ---------- */
 #game{padding:0;overflow:hidden;background:var(--felt);}
+#game::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,.05) 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,.04) 0 2px, transparent 3px),
+    radial-gradient(circle at 35% 75%, rgba(255,255,255,.04) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 85%, rgba(255,255,255,.05) 0 2px, transparent 3px);
+  background-size:340px 340px;}
+#game::after{content:'';position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 140px 40px rgba(0,0,0,.55);}
 #hud{position:absolute;top:0;left:0;right:0;z-index:60;
-  display:flex;align-items:center;justify-content:space-between;gap:8px;
-  padding:calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding:calc(env(safe-area-inset-top,0px) + 6px) 10px 6px;
   background:linear-gradient(180deg,rgba(0,0,0,.55),transparent);}
 .hud-box{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);border-radius:12px;
-  padding:6px 12px;font-size:14px;font-weight:700;letter-spacing:.03em;display:flex;gap:6px;align-items:center;}
+  padding:4px 10px;font-size:14px;font-weight:700;letter-spacing:.03em;}
 .hud-box .lab{font-size:9px;text-transform:uppercase;color:var(--txt-dim);letter-spacing:.14em;display:block;font-weight:600;}
-#hud .icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
+#hud .icon-btn{width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
   background:rgba(0,0,0,.35);color:var(--txt);font-size:18px;}
 #toolbar{position:absolute;bottom:0;left:0;right:0;z-index:60;display:flex;justify-content:center;gap:10px;
-  padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 12px);
+  padding:8px 12px calc(env(safe-area-inset-bottom,0px) + 8px);
   background:linear-gradient(0deg,rgba(0,0,0,.55),transparent);}
 .tool{border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.4);color:var(--txt);
-  border-radius:14px;padding:10px 14px;font-size:13px;font-weight:600;display:flex;flex-direction:column;
-  align-items:center;gap:2px;min-width:70px;transition:transform .15s;}
+  border-radius:14px;padding:7px 12px;font-size:12px;font-weight:600;display:flex;flex-direction:column;
+  align-items:center;gap:1px;min-width:66px;transition:transform .15s;}
 .tool:active{transform:scale(.92);}
-.tool .ico{font-size:19px;}
+.tool .ico{font-size:18px;}
 .tool .cnt{font-size:10px;color:var(--accent);font-weight:700;}
 .tool[disabled]{opacity:.35;}
 
-#stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;perspective:1100px;}
-#board{position:relative;transform-style:preserve-3d;transition:transform .5s;}
+#stage{position:absolute;inset:0;perspective:1200px;overflow:visible;}
+#board{position:absolute;left:50%;top:50%;transform-style:preserve-3d;
+  transition:transform .45s cubic-bezier(.3,1.2,.4,1);}
+#boardGlow{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);border-radius:50%;
+  background:radial-gradient(closest-side,var(--glow),transparent 70%);opacity:.14;pointer-events:none;filter:blur(10px);}
+
 .tile{
   position:absolute;width:var(--tile-w);height:var(--tile-h);border-radius:8px;
   background:linear-gradient(155deg,var(--tile-face) 0%,var(--tile-face2) 100%);
@@ -153,26 +164,26 @@ button{font-family:inherit;}
 }
 .tile.dealing{animation:dealIn .5s cubic-bezier(.2,1.4,.4,1) backwards;}
 @keyframes dealIn{from{opacity:0;transform:var(--tf) translateZ(240px) rotateZ(20deg) scale(.4);}to{opacity:1;transform:var(--tf);}}
-.tile.locked{filter:brightness(.62) saturate(.75);}
+.tile.locked{filter:brightness(.6) saturate(.7);}
 .tile.sel{
   filter:brightness(1.15);
   box-shadow:0 0 0 3px var(--accent),0 0 26px 6px var(--glow),3px 0 0 var(--tile-side),0 5px 0 var(--tile-side),8px 14px 18px rgba(0,0,0,.45);
   animation:selPulse 1s ease-in-out infinite;
 }
-@keyframes selPulse{0%,100%{filter:brightness(1.12)}50%{filter:brightness(1.3)}}
+@keyframes selPulse{0%,100%{filter:brightness(1.12)}50%{filter:brightness(1.32)}}
 .tile.hint{animation:hintPulse .55s ease-in-out 4;}
 @keyframes hintPulse{0%,100%{box-shadow:3px 0 0 var(--tile-side),0 5px 0 var(--tile-side),8px 14px 18px rgba(0,0,0,.45)}
   50%{box-shadow:0 0 0 4px var(--accent2),0 0 30px 8px var(--accent2),8px 14px 18px rgba(0,0,0,.45)}}
 .tile.gone{animation:matchOut .55s cubic-bezier(.4,-.2,.7,1) forwards;pointer-events:none;}
 @keyframes matchOut{
-  30%{opacity:1;transform:var(--tf) translateZ(110px) rotateZ(-8deg) scale(1.22);filter:brightness(1.6);}
+  30%{opacity:1;transform:var(--tf) translateZ(110px) rotateZ(-8deg) scale(1.22);filter:brightness(1.7);}
   100%{opacity:0;transform:var(--tf) translateZ(240px) rotateZ(24deg) scale(.2);}
 }
 .tile.shake{animation:shake .35s;}
 @keyframes shake{0%,100%{transform:var(--tf)}25%{transform:var(--tf) translateX(-5px)}75%{transform:var(--tf) translateX(5px)}}
 
 /* faces des tuiles */
-.face{width:82%;height:84%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;color:var(--tile-ink);}
+.face{width:82%;height:84%;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;color:var(--tile-ink);position:relative;}
 .face .big{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:calc(var(--tile-w)*.52);line-height:1;}
 .face .num{font-family:Georgia,serif;font-weight:700;font-size:calc(var(--tile-w)*.34);line-height:1;}
 .face .suitname{font-size:calc(var(--tile-w)*.30);font-family:Georgia,serif;font-weight:700;margin-top:2px;}
@@ -188,8 +199,42 @@ button{font-family:inherit;}
   box-shadow:inset 0 0 0 1.5px rgba(0,0,0,.25),inset 0 3px 2px rgba(255,255,255,.35);}
 .blank-frame{width:74%;height:76%;border:4px solid #28527a;border-radius:8px;}
 [data-theme="neon"] .blank-frame,[data-theme="or"] .blank-frame{border-color:currentColor;}
-.face .emo{font-size:calc(var(--tile-w)*.56);line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));}
-.face .corner{position:absolute;top:4px;left:6px;font-size:10px;font-weight:700;opacity:.55;}
+.face .emo{font-size:calc(var(--tile-w)*.58);line-height:1;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));}
+.face .corner{position:absolute;top:2px;left:5px;font-size:11px;font-weight:700;opacity:.55;}
+/* faces en image (planches illustrées) */
+.imgface{position:absolute;inset:1px;border-radius:7px;background-repeat:no-repeat;pointer-events:none;}
+
+/* ---------- rack Triplettes ---------- */
+#tray{position:absolute;left:50%;transform:translateX(-50%);z-index:70;display:none;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 84px);
+  gap:5px;padding:8px;border-radius:16px;
+  background:linear-gradient(180deg,rgba(0,0,0,.5),rgba(0,0,0,.7));
+  border:1px solid rgba(255,255,255,.18);box-shadow:0 10px 30px rgba(0,0,0,.5);}
+#tray.on{display:flex;}
+.slot{width:52px;height:58px;border-radius:7px;border:1.5px dashed rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;position:relative;transition:border-color .2s;}
+.slot .ttile{position:absolute;inset:0;border-radius:7px;
+  background:linear-gradient(155deg,var(--tile-face),var(--tile-face2));
+  border-bottom:4px solid var(--tile-side);
+  display:flex;align-items:center;justify-content:center;
+  --tile-w:44px;--tile-h:58px;
+  animation:trayPop .3s cubic-bezier(.2,1.6,.4,1);}
+@keyframes trayPop{from{transform:scale(.4)}to{transform:scale(1)}}
+.slot .ttile.clearing{animation:trayClear .4s forwards;}
+@keyframes trayClear{50%{transform:scale(1.35);filter:brightness(2)}100%{transform:scale(0);opacity:0}}
+#tray.danger .slot{border-color:var(--danger);}
+.fly{position:fixed;z-index:200;pointer-events:none;border-radius:8px;
+  background:linear-gradient(155deg,var(--tile-face),var(--tile-face2));
+  border-bottom:4px solid var(--tile-side);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 20px var(--glow);
+  transition:all .45s cubic-bezier(.3,.7,.3,1);}
+
+/* score flottant */
+.floatpts{position:fixed;z-index:210;pointer-events:none;font-weight:800;font-size:20px;
+  color:var(--accent2);text-shadow:0 0 12px var(--glow),0 2px 4px rgba(0,0,0,.6);
+  animation:floatUp 1s ease-out forwards;}
+@keyframes floatUp{from{opacity:1;transform:translate(-50%,0) scale(.8)}30%{transform:translate(-50%,-18px) scale(1.15)}to{opacity:0;transform:translate(-50%,-60px) scale(1)}}
 
 /* ---------- overlays ---------- */
 .overlay{position:absolute;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
@@ -204,7 +249,6 @@ button{font-family:inherit;}
 .panel h2.win{background:linear-gradient(180deg,var(--accent2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 20px var(--glow);}
 .panel p{color:var(--txt-dim);font-size:14px;margin-bottom:8px;line-height:1.5;}
 .panel .stats{display:flex;justify-content:center;gap:20px;margin:14px 0 18px;}
-.panel .stats div{text-align:center;}
 .panel .stats b{font-size:22px;display:block;color:var(--accent);}
 .panel .stats span{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--txt-dim);}
 .panel .btn{width:100%;margin-top:8px;}
@@ -218,7 +262,8 @@ button{font-family:inherit;}
 .theme-card{border-radius:14px;padding:12px;border:2px solid transparent;text-align:left;color:var(--txt);
   background:rgba(255,255,255,.05);display:flex;align-items:center;gap:10px;transition:all .2s;}
 .theme-card.sel{border-color:var(--accent);box-shadow:0 0 14px var(--glow);}
-.swatch{width:38px;height:38px;border-radius:10px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);}
+.swatch{width:38px;height:38px;border-radius:10px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;font-size:20px;}
 .theme-card b{display:block;font-size:14px;}
 .theme-card small{color:var(--txt-dim);font-size:10px;}
 .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 2px;font-size:15px;}
@@ -228,8 +273,8 @@ button{font-family:inherit;}
 .switch.on::after{left:25px;}
 
 .tuto-tabs{display:flex;gap:8px;width:min(440px,100%);margin-bottom:10px;}
-.tuto-tab{flex:1;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.04);color:var(--txt-dim);font-size:13px;font-weight:600;}
+.tuto-tab{flex:1;padding:10px 4px;border-radius:12px;border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);color:var(--txt-dim);font-size:12px;font-weight:600;}
 .tuto-tab.sel{background:var(--accent);color:var(--bg1);border-color:var(--accent);}
 .tuto-body{width:min(440px,100%);line-height:1.65;font-size:14.5px;color:var(--txt);}
 .tuto-body h4{color:var(--accent);margin:14px 0 4px;font-size:15px;}
@@ -241,13 +286,10 @@ button{font-family:inherit;}
   font-family:Georgia,serif;font-weight:700;font-size:20px;color:var(--tile-ink);}
 
 #fx{position:absolute;inset:0;z-index:90;pointer-events:none;}
-#toast{position:absolute;top:22%;left:50%;transform:translate(-50%,0) scale(.8);z-index:95;
+#toast{position:absolute;top:20%;left:50%;transform:translate(-50%,0) scale(.8);z-index:95;
   background:rgba(0,0,0,.7);border:1px solid var(--accent);color:var(--txt);border-radius:14px;
   padding:10px 20px;font-weight:700;font-size:15px;opacity:0;transition:all .3s;pointer-events:none;box-shadow:0 0 20px var(--glow);}
 #toast.show{opacity:1;transform:translate(-50%,0) scale(1);}
-@media (prefers-reduced-motion: reduce){
-  *{animation-duration:.001s !important;transition-duration:.001s !important;}
-}
 </style>
 </head>
 <body data-theme="jade">
@@ -277,14 +319,16 @@ button{font-family:inherit;}
 
 <!-- ================= JEU ================= -->
 <section id="game" class="screen">
+  <div id="boardGlow"></div>
   <div id="stage"><div id="board"></div></div>
   <canvas id="fx"></canvas>
   <div id="hud">
     <button class="icon-btn" id="homeBtn">⌂</button>
-    <div class="hud-box"><div><span class="lab">Temps</span><span id="hudTime">0:00</span></div></div>
-    <div class="hud-box"><div><span class="lab">Paires</span><span id="hudPairs">72</span></div></div>
-    <div class="hud-box"><div><span class="lab">Score</span><span id="hudScore">0</span></div></div>
+    <div class="hud-box"><span class="lab">Temps</span><span id="hudTime">0:00</span></div>
+    <div class="hud-box"><span class="lab" id="hudPairsLab">Paires</span><span id="hudPairs">72</span></div>
+    <div class="hud-box"><span class="lab">Score</span><span id="hudScore">0</span></div>
   </div>
+  <div id="tray"></div>
   <div id="toolbar">
     <button class="tool" id="undoBtn"><span class="ico">↩</span>Annuler<span class="cnt" id="undoCnt"></span></button>
     <button class="tool" id="hintBtn"><span class="ico">💡</span>Indice<span class="cnt" id="hintCnt"></span></button>
@@ -294,7 +338,7 @@ button{font-family:inherit;}
 
   <div class="overlay" id="winOv"><div class="panel">
     <h2 class="win">✨ Victoire !</h2>
-    <p id="winMsg">Toutes les tuiles ont été appariées.</p>
+    <p id="winMsg"></p>
     <div class="stats">
       <div><b id="winTime">0:00</b><span>Temps</span></div>
       <div><b id="winScore">0</b><span>Score</span></div>
@@ -304,9 +348,9 @@ button{font-family:inherit;}
   </div></div>
 
   <div class="overlay" id="loseOv"><div class="panel">
-    <h2 style="color:var(--danger)">Bloqué…</h2>
-    <p id="loseMsg">Plus aucun coup possible.</p>
-    <button class="btn" id="loseShuf">🔀 Mélanger et continuer</button>
+    <h2 style="color:var(--danger)" id="loseTitle">Bloqué…</h2>
+    <p id="loseMsg"></p>
+    <button class="btn" id="loseAct" style="display:none"></button>
     <button class="btn ghost" id="loseAgain">Nouvelle partie</button>
     <button class="btn ghost" id="loseHome">Menu principal</button>
   </div></div>
@@ -325,17 +369,18 @@ button{font-family:inherit;}
   <div class="top-nav"><button class="back-btn" data-nav="home">←</button><h2>Tutoriel</h2></div>
   <div class="tuto-tabs">
     <button class="tuto-tab sel" data-tab="t1">Bases</button>
-    <button class="tuto-tab" data-tab="t2">Tuiles spéciales</button>
-    <button class="tuto-tab" data-tab="t3">Modes & astuces</button>
+    <button class="tuto-tab" data-tab="t2">Spéciales</button>
+    <button class="tuto-tab" data-tab="t4">Triplettes</button>
+    <button class="tuto-tab" data-tab="t3">Astuces</button>
   </div>
   <div class="tuto-body" id="t1">
     <h4>Le but du jeu</h4>
     <p>Retirez <b>toutes les tuiles</b> du plateau en les appariant <b>deux par deux</b>. Deux tuiles identiques touchées l'une après l'autre disparaissent dans un éclat de lumière.</p>
     <h4>Tuile « libre »</h4>
-    <p>Une tuile ne peut être jouée que si elle est <b>libre</b> : aucune tuile posée dessus, et au moins <b>un côté dégagé</b> (gauche ou droite). Les tuiles bloquées apparaissent assombries.</p>
+    <p>Une tuile ne peut être jouée que si elle est <b>libre</b> : aucune tuile posée dessus, et au moins <b>un des deux bouts de sa rangée dégagé</b>. Les tuiles bloquées apparaissent assombries.</p>
     <h4>Les familles</h4>
     <div class="demo-tiles"><div class="mini">●</div><div class="mini">‖</div><div class="mini">萬</div><div class="mini">東</div><div class="mini">中</div></div>
-    <p><b>Cercles</b> (1 à 9), <b>Bambous</b> (1 à 9), <b>Caractères</b> (一 à 九 + 萬), les <b>Vents</b> (東 南 西 北) et les <b>Dragons</b> (中 rouge, 發 vert, blanc). Chaque tuile existe en 4 exemplaires : appariez les identiques.</p>
+    <p><b>Cercles</b>, <b>Bambous</b>, <b>Caractères</b>, les <b>Vents</b> (東 南 西 北) et les <b>Dragons</b> (中 rouge, 發 vert, blanc). Chaque tuile existe en 4 exemplaires. Dans les Réglages, vous pouvez remplacer ces motifs par des <b>émojis fun</b> ou des <b>gemmes</b> !</p>
   </div>
   <div class="tuto-body" id="t2" style="display:none">
     <h4>🌸 Les Fleurs — règle spéciale</h4>
@@ -345,17 +390,26 @@ button{font-family:inherit;}
     <div class="demo-tiles"><div class="mini">🌱</div><div class="mini">☀️</div><div class="mini">🍁</div><div class="mini">❄️</div></div>
     <p>Même principe : Printemps, Été, Automne et Hiver s'apparient <b>entre eux</b>, dans n'importe quelle combinaison.</p>
     <h4>⚠️ Attention</h4>
-    <p>Une Fleur ne s'apparie <b>jamais</b> avec une Saison. Et le Dragon blanc (cadre vide) est une tuile normale : il ne s'apparie qu'avec un autre Dragon blanc.</p>
+    <p>Une Fleur ne s'apparie <b>jamais</b> avec une Saison. Ces règles s'appliquent aussi en mode Triplettes (3 fleurs quelconques, 3 saisons quelconques).</p>
+  </div>
+  <div class="tuto-body" id="t4" style="display:none">
+    <h4>🎯 Le mode Triplettes</h4>
+    <p>Une règle <b>radicalement différente</b> : touchez n'importe quelle tuile libre pour la <b>mettre de côté</b> dans votre rack en bas de l'écran.</p>
+    <p>Dès que <b>3 tuiles identiques</b> se retrouvent dans le rack, elles explosent et rapportent des points !</p>
+    <h4>💥 Le danger</h4>
+    <p>Le rack ne contient que <b>7 emplacements</b>. S'il est plein sans triple à former… la partie est perdue. Surveillez-le comme le lait sur le feu.</p>
+    <h4>Stratégie</h4>
+    <p>Ne prenez jamais une tuile « pour voir » : chaque emplacement compte. Repérez d'abord <b>où sont les 3 exemplaires</b> avant de commencer une famille, et videz le rack le plus souvent possible.</p>
   </div>
   <div class="tuto-body" id="t3" style="display:none">
     <h4>Les règles de partie</h4>
-    <p><b>Classique</b> — temps libre, 3 mélanges, 3 indices, annulations limitées. Si vous êtes bloqué sans mélange restant, la partie est perdue.</p>
-    <p><b>Chrono</b> — 10 minutes pour tout nettoyer ! Chaque paire rapporte plus de points, bonus de temps à la victoire.</p>
-    <p><b>Zen</b> — aucune pression : mélanges, indices et annulations illimités. Parfait pour apprendre ou se détendre.</p>
+    <p><b>Classique</b> — temps libre, 3 mélanges, 3 indices. Bloqué sans mélange restant = perdu.</p>
+    <p><b>Chrono</b> — 10 minutes pour tout nettoyer, gros bonus de temps à la victoire.</p>
+    <p><b>Zen</b> — mélanges, indices et annulations illimités. Pour apprendre ou se détendre.</p>
+    <p><b>Triplettes</b> — le mode au rack de 7 (voir son onglet).</p>
     <h4>Astuces de maître</h4>
     <p>• Ouvrez d'abord les <b>longues rangées</b> et les <b>piles hautes</b>.<br>
     • Si les 4 exemplaires d'une tuile sont libres, retirez-les <b>tous ensemble</b> sans risque.<br>
-    • S'il n'y a que 2 exemplaires visibles, vérifiez qu'un appariement n'en bloque pas un autre.<br>
     • Gardez un indice pour la fin de partie, c'est là que ça se corse !</p>
   </div>
 </section>
@@ -366,6 +420,10 @@ button{font-family:inherit;}
   <div class="card">
     <h3>Thème visuel</h3>
     <div class="theme-grid" id="themeGrid"></div>
+  </div>
+  <div class="card">
+    <h3>Style des tuiles</h3>
+    <div class="theme-grid" id="tilesetGrid"></div>
   </div>
   <div class="card">
     <h3>Audio</h3>
@@ -380,7 +438,7 @@ button{font-family:inherit;}
 <script>
 "use strict";
 /* ============================================================
-   MAHJONG 3D — moteur de jeu
+   MAHJONG 3D v2 — moteur de jeu
    ============================================================ */
 const $ = id => document.getElementById(id);
 const store = {
@@ -388,10 +446,11 @@ const store = {
   set(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
 };
 
-/* ---------- AUDIO (bruitages synthétisés) ---------- */
+/* ---------- AUDIO ---------- */
 let audioCtx=null, sfxOn=store.get('sfx',true), musicOn=store.get('music',false);
 function ac(){ if(!audioCtx){ try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return audioCtx; }
-function tone(f,t0,dur,type='sine',vol=.2,slide=0){
+function tone(f,t0,dur,type,vol,slide){
+  type=type||'sine'; vol=vol||.2; slide=slide||0;
   const c=ac(); if(!c||!sfxOn) return;
   const o=c.createOscillator(), g=c.createGain();
   o.type=type; o.frequency.setValueAtTime(f,c.currentTime+t0);
@@ -406,6 +465,8 @@ const SFX={
   tap(){ tone(650,0,.08,'triangle',.15); },
   select(){ tone(520,0,.1,'sine',.18); tone(780,.03,.1,'sine',.12); },
   match(){ tone(660,0,.12,'triangle',.2); tone(880,.06,.14,'triangle',.18); tone(1320,.12,.2,'sine',.14); },
+  triple(){ [660,880,1100,1470].forEach((f,i)=>tone(f,i*.05,.16,'triangle',.18)); },
+  place(){ tone(440,0,.09,'triangle',.16); tone(560,.04,.08,'sine',.1); },
   bad(){ tone(200,0,.16,'sawtooth',.12,-80); },
   shuffle(){ for(let i=0;i<6;i++) tone(300+Math.random()*500,i*.05,.06,'triangle',.08); },
   hint(){ tone(980,0,.1,'sine',.14); tone(1240,.09,.14,'sine',.12); },
@@ -423,7 +484,60 @@ function applyMusic(){ if(musicOn){ bgm.volume=.5; bgm.play().catch(()=>{}); } e
 const DOT_POS={1:[4],2:[1,7],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8],7:[0,2,3,4,5,6,8],8:[0,1,2,3,5,6,7,8],9:[0,1,2,3,4,5,6,7,8]};
 const HANZI=['一','二','三','四','五','六','七','八','九'];
 const FLOWERS=['🌸','🌷','🌻','🌺'], SEASONS=['🌱','☀️','🍁','❄️'];
-function faceHTML(f){
+let tileset=store.get('tileset','mahjong');
+const IMGSETS={
+  img_or:{file:'img/set_or.jpg',cols:6,rows:6,n:36,ratio:1.33,theme:'or'},
+  img_neon:{file:'img/set_neon.jpg',cols:7,rows:5,n:35,ratio:1.07,theme:'neon'},
+  img_jade:{file:'img/set_jade.jpg',cols:6,rows:6,n:36,ratio:1.33,theme:'jade'},
+  img_sakura:{file:'img/set_sakura.jpg',cols:6,rows:6,n:36,ratio:1.33,theme:'sakura'}
+};
+const KEYS36=(()=>{const a=[];for(let n=1;n<=9;n++)a.push('d'+n);for(let n=1;n<=9;n++)a.push('b'+n);for(let n=1;n<=9;n++)a.push('m'+n);
+  ['東','南','西','北'].forEach(g=>a.push('w'+g));['中','發','白'].forEach(g=>a.push('g'+g));a.push('FLW','SAI');return a;})();
+const TILESETS=[
+  {id:'mahjong',name:'Mah-jong',desc:'Tuiles traditionnelles',icon:'萬'},
+  {id:'fun',name:'Fun',desc:'Fruits, animaux, fusées',icon:'🚀'},
+  {id:'gemmes',name:'Gemmes',desc:'Couleurs éclatantes',icon:'💎'},
+  {id:'img_or',name:'Or & laque ✨',desc:'Illustrations · thème Or',icon:'🐉'},
+  {id:'img_neon',name:'Néon ✨',desc:'Illustrations · thème Néon',icon:'🌆'},
+  {id:'img_jade',name:'Jade ✨',desc:'Illustrations · thème Jade',icon:'🐲'},
+  {id:'img_sakura',name:'Sakura ✨',desc:'Illustrations · thème Sakura',icon:'🌸'}
+];
+const ALT={
+  fun:{ d:['🍎','🍌','🍇','🍉','🍓','🍍','🥝','🍒','🍑'],
+        b:['🐶','🐱','🦊','🐼','🐸','🦁','🐵','🐷','🐨'],
+        m:['🚀','⭐','🎈','🎁','🎩','🎲','🎸','⚽','🍭'],
+        w:{ '東':'🌍','南':'🌊','西':'🔥','北':'💨' },
+        g:{ '中':'👑','發':'💎','白':'🃏' }, FLW:'🌈', SAI:'🍀' },
+  gemmes:{ d:['🔴','🔵','🟢','🟡','🟣','🟠','⚫','⚪','🟤'],
+        b:['❤️','💙','💚','💛','💜','🧡','🖤','🤍','🤎'],
+        m:['🔺','🔷','🟩','🌟','🔶','🟪','♦️','⬛','⭕'],
+        w:{ '東':'☀️','南':'🌙','西':'⚡','北':'☄️' },
+        g:{ '中':'👑','發':'💎','白':'🎱' }, FLW:'🌸', SAI:'❄️' }
+};
+function altGlyph(key,face){
+  const S=ALT[tileset];
+  if(key[0]==='d'&&S.d) return S.d[+key.slice(1)-1];
+  if(key[0]==='b'&&S.b) return S.b[+key.slice(1)-1];
+  if(key[0]==='m'&&S.m) return S.m[+key.slice(1)-1];
+  if(key[0]==='w'&&S.w) return S.w[key.slice(1)];
+  if(key[0]==='g'&&S.g) return S.g[key.slice(1)];
+  if(key==='FLW') return S.FLW;
+  if(key==='SAI') return S.SAI;
+  return face.g||'?';
+}
+function faceHTML(key,f){
+  const S=IMGSETS[tileset];
+  if(S){
+    const idx=KEYS36.indexOf(key);
+    const ci=(idx>=0&&idx<S.n)?idx:S.n-1;
+    const extra=(idx>=S.n)?'filter:hue-rotate(140deg) saturate(1.35);':'';
+    const px=S.cols>1?((ci%S.cols)/(S.cols-1)*100):0;
+    const py=S.rows>1?(Math.floor(ci/S.cols)/(S.rows-1)*100):0;
+    return `<div class="imgface" style="background-image:url(${S.file});background-size:${S.cols*100}% ${S.rows*100}%;background-position:${px.toFixed(3)}% ${py.toFixed(3)}%;${extra}"></div>`;
+  }
+  if(tileset!=='mahjong'){
+    return `<div class="face"><span class="emo">${altGlyph(key,f)}</span></div>`;
+  }
   if(f.suit==='dot'){
     const col=['blue','red','green'][f.n%3];
     return `<div class="face ${col}"><span class="corner">${f.n}</span><div class="dots">`+
@@ -444,22 +558,35 @@ function faceHTML(f){
   }
   return `<div class="face"><span class="emo">${f.g}</span></div>`;
 }
+function allFaces(){
+  const a=[];
+  for(let n=1;n<=9;n++){ a.push(['d'+n,{suit:'dot',n}]); a.push(['b'+n,{suit:'bam',n}]); a.push(['m'+n,{suit:'man',n}]); }
+  ['東','南','西','北'].forEach(g=>a.push(['w'+g,{suit:'wind',g}]));
+  ['中','發','白'].forEach(g=>a.push(['g'+g,{suit:'drg',g}]));
+  return a;
+}
 function buildPairPool(){
   const pool=[];
-  const push=(key,f)=>pool.push({key,a:f,b:f});
-  for(let n=1;n<=9;n++){ const f={suit:'dot',n}; push('d'+n,f); push('d'+n,f); }
-  for(let n=1;n<=9;n++){ const f={suit:'bam',n}; push('b'+n,f); push('b'+n,f); }
-  for(let n=1;n<=9;n++){ const f={suit:'man',n}; push('m'+n,f); push('m'+n,f); }
-  ['東','南','西','北'].forEach(g=>{ const f={suit:'wind',g}; push('w'+g,f); push('w'+g,f); });
-  ['中','發','白'].forEach(g=>{ const f={suit:'drg',g}; push('g'+g,f); push('g'+g,f); });
-  pool.push({key:'FLW',a:{suit:'flw',g:FLOWERS[0]},b:{suit:'flw',g:FLOWERS[1]}});
-  pool.push({key:'FLW',a:{suit:'flw',g:FLOWERS[2]},b:{suit:'flw',g:FLOWERS[3]}});
-  pool.push({key:'SAI',a:{suit:'sai',g:SEASONS[0]},b:{suit:'sai',g:SEASONS[1]}});
-  pool.push({key:'SAI',a:{suit:'sai',g:SEASONS[2]},b:{suit:'sai',g:SEASONS[3]}});
+  allFaces().forEach(([k,f])=>{ pool.push({key:k,faces:[f,f]}); pool.push({key:k,faces:[f,f]}); });
+  pool.push({key:'FLW',faces:[{suit:'flw',g:FLOWERS[0]},{suit:'flw',g:FLOWERS[1]}]});
+  pool.push({key:'FLW',faces:[{suit:'flw',g:FLOWERS[2]},{suit:'flw',g:FLOWERS[3]}]});
+  pool.push({key:'SAI',faces:[{suit:'sai',g:SEASONS[0]},{suit:'sai',g:SEASONS[1]}]});
+  pool.push({key:'SAI',faces:[{suit:'sai',g:SEASONS[2]},{suit:'sai',g:SEASONS[3]}]});
   return pool; // 72 paires = 144 tuiles
 }
+function buildTriplePool(n){
+  const units=[];
+  allFaces().forEach(([k,f])=>units.push({key:k,faces:[f,f,f]}));
+  units.push({key:'FLW',faces:FLOWERS.slice(0,3).map(g=>({suit:'flw',g}))});
+  units.push({key:'SAI',faces:SEASONS.slice(0,3).map(g=>({suit:'sai',g}))});
+  shuffleArr(units);
+  const out=[];
+  let i=0;
+  while(out.length<n){ out.push(units[i%units.length]); i++; }
+  return shuffleArr(out).slice(0,n);
+}
 
-/* ---------- DISPOSITIONS (unités : demi-tuile, une tuile = 2×2) ---------- */
+/* ---------- DISPOSITIONS ---------- */
 function rectL(cols,rows,z,x0,y0){ const a=[]; for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) a.push([x0+c*2,y0+r*2,z]); return a; }
 const LAYOUTS={
   facile:{name:'Facile',desc:'40 tuiles',build(){
@@ -486,9 +613,10 @@ const LAYOUTS={
   }}
 };
 const RULES={
-  classique:{name:'Classique',desc:'Détente',hints:3,shuffles:3,undos:5,time:0},
-  chrono:{name:'Chrono',desc:'10 min ⏱',hints:2,shuffles:1,undos:3,time:600},
-  zen:{name:'Zen',desc:'Illimité',hints:Infinity,shuffles:Infinity,undos:Infinity,time:0}
+  classique:{name:'Classique',desc:'Détente',mode:'pair',hints:3,shuffles:3,undos:5,time:0},
+  chrono:{name:'Chrono',desc:'10 min ⏱',mode:'pair',hints:2,shuffles:1,undos:3,time:600},
+  zen:{name:'Zen',desc:'Illimité',mode:'pair',hints:Infinity,shuffles:Infinity,undos:Infinity,time:0},
+  triple:{name:'Triplettes',desc:'Rack de 7 🎯',mode:'triple',hints:3,shuffles:2,undos:5,time:0}
 };
 const THEMES=[
   {id:'jade',name:'Jade impérial',desc:'Vert profond & ivoire',c1:'#0d3a2c',c2:'#35d99a'},
@@ -500,8 +628,16 @@ const THEMES=[
 
 /* ---------- ÉTAT ---------- */
 let curLayout=store.get('layout','classique'), curRule=store.get('rule','classique');
-let G=null; // partie en cours
-const TW=62, TH=84, TD=14; // px (doivent suivre :root)
+let G=null;
+let TW=62, TH=84; const TD=14;
+function applyTileDims(){
+  const S=IMGSETS[tileset], area=62*84;
+  if(S){ TW=Math.round(Math.sqrt(area*S.ratio)); TH=Math.round(TW/S.ratio); }
+  else { TW=62; TH=84; }
+  document.documentElement.style.setProperty('--tile-w',TW+'px');
+  document.documentElement.style.setProperty('--tile-h',TH+'px');
+}
+applyTileDims();
 
 function overlaps(a,b){ return Math.abs(a.x-b.x)<2 && Math.abs(a.y-b.y)<2; }
 function isFree(t,list){
@@ -516,78 +652,120 @@ function isFree(t,list){
 }
 function shuffleArr(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
-/* Distribution garantie gagnable : on choisit un ordre de retrait valide à l'envers */
-function dealFaces(slots){
-  const need=slots.length/2;
+/* Ajuste la disposition au multiple voulu en retirant des tuiles "de toit" */
+function trimSlots(slots,mult){
+  const rm=slots.length%mult;
+  if(!rm) return slots;
+  const objs=slots.map(s=>({x:s[0],y:s[1],z:s[2]}));
+  for(let k=0;k<rm;k++){
+    let best=-1;
+    for(let i=0;i<objs.length;i++){
+      const t=objs[i];
+      const roofed=objs.some((o,j)=>j!==i&&o.z===t.z+1&&overlaps(t,o));
+      if(!roofed && (best<0||t.z>objs[best].z)) best=i;
+    }
+    objs.splice(best,1);
+  }
+  return objs.map(o=>[o.x,o.y,o.z]);
+}
+
+/* Distribution garantie gagnable : ordre de retrait valide construit à l'envers */
+function dealFaces(slots,mode){
+  const gsize=mode==='triple'?3:2;
+  const need=slots.length/gsize;
   for(let attempt=0;attempt<60;attempt++){
-    const pool=shuffleArr(buildPairPool().slice()).slice(0,need);
+    const pool=mode==='triple'?buildTriplePool(need):shuffleArr(buildPairPool()).slice(0,need);
     const rem=slots.map(s=>({x:s[0],y:s[1],z:s[2]}));
     const assign=new Map(); let ok=true;
     for(let p=0;p<need;p++){
       const free=rem.filter(t=>isFree(t,rem));
-      if(free.length<2){ ok=false; break; }
+      if(free.length<gsize){ ok=false; break; }
       shuffleArr(free);
-      const t1=free[0], t2=free[1], pr=pool[p];
-      assign.set(t1.x+','+t1.y+','+t1.z,{key:pr.key,face:pr.a});
-      assign.set(t2.x+','+t2.y+','+t2.z,{key:pr.key,face:pr.b});
-      rem.splice(rem.indexOf(t1),1); rem.splice(rem.indexOf(t2),1);
+      for(let g=0;g<gsize;g++){
+        const t=free[g];
+        assign.set(t.x+','+t.y+','+t.z,{key:pool[p].key,face:pool[p].faces[g]});
+        rem.splice(rem.indexOf(t),1);
+      }
     }
     if(ok) return assign;
   }
-  // secours : distribution aléatoire simple
-  const pool=shuffleArr(buildPairPool().slice()).slice(0,need);
-  const faces=[]; pool.forEach(pr=>{ faces.push({key:pr.key,face:pr.a},{key:pr.key,face:pr.b}); });
+  const pool=mode==='triple'?buildTriplePool(need):shuffleArr(buildPairPool()).slice(0,need);
+  const faces=[]; pool.forEach(u=>u.faces.forEach(f=>faces.push({key:u.key,face:f})));
   shuffleArr(faces);
   const m=new Map(); slots.forEach((s,i)=>m.set(s[0]+','+s[1]+','+s[2],faces[i]));
   return m;
 }
 
-/* ---------- RENDU ---------- */
-function buildBoard(){
+/* ---------- RENDU & AJUSTEMENT PLEIN ÉCRAN ---------- */
+let B=null; // métriques du plateau
+function buildBoard(mode){
   const board=$('board'); board.innerHTML='';
-  const slots=LAYOUTS[curLayout].build();
-  const assign=dealFaces(slots);
+  let slots=LAYOUTS[curLayout].build();
+  if(mode==='triple') slots=trimSlots(slots,3);
+  const assign=dealFaces(slots,mode);
   const tiles=[];
   slots.forEach((s,i)=>{
     const [x,y,z]=s, a=assign.get(x+','+y+','+z);
     const el=document.createElement('div');
     el.className='tile dealing';
-    el.innerHTML=faceHTML(a.face);
-    el.style.animationDelay=(i*9)+'ms';
-    const t={x,y,z,key:a.key,el,dead:false};
+    el.innerHTML=faceHTML(a.key,a.face);
+    el.style.animationDelay=(i*8)+'ms';
+    const t={x,y,z,key:a.key,face:a.face,el,dead:false};
     el.addEventListener('click',()=>onTile(t));
     tiles.push(t); board.appendChild(el);
+    setTimeout(()=>el.classList.remove('dealing'),i*8+700);
   });
-  // dimensions
   let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9,maxZ=0;
   tiles.forEach(t=>{minX=Math.min(minX,t.x);maxX=Math.max(maxX,t.x+2);minY=Math.min(minY,t.y);maxY=Math.max(maxY,t.y+2);maxZ=Math.max(maxZ,t.z);});
-  const W=(maxX-minX)/2*TW, H=(maxY-minY)/2*TH;
+  B={minX,maxX,minY,maxY,maxZ,tiles};
+  layoutTiles();
+  return tiles;
+}
+function reservedBottom(){ return (G&&G.mode==='triple')?236:150; }
+function layoutTiles(){
+  if(!B) return;
+  const topR=86, botR=reservedBottom();
+  const availW=innerWidth-16, availH=innerHeight-topR-botR;
+  const spanX=(B.maxX-B.minX)/2, spanY=(B.maxY-B.minY)/2;
+  const tilt=0.91; // compression visuelle du rotateX(24°)
+  // orientation normale vs transposée (plateau pivoté pour l'écran vertical)
+  const sN=Math.min(availW/(spanX*TW), availH/(spanY*TH*tilt));
+  const sT=Math.min(availW/(spanY*TW), availH/(spanX*TH*tilt));
+  const transposed=sT>sN*1.02;
+  const scale=Math.min(Math.max(transposed?sT:sN,0.4),2.3)*0.97;
+  const W=(transposed?spanY:spanX)*TW, H=(transposed?spanX:spanY)*TH;
+  const board=$('board');
   board.style.width=W+'px'; board.style.height=H+'px';
-  tiles.forEach(t=>{
-    const px=(t.x-minX)/2*TW - t.z*4, py=(t.y-minY)/2*TH - t.z*5;
+  board.style.marginLeft=(-W/2)+'px';
+  board.style.marginTop=(-H/2 - (botR-topR)/2)+'px';
+  board.style.transform=`rotateX(24deg) scale(${scale})`;
+  B.tiles.forEach(t=>{
+    const lx=transposed?(t.y-B.minY):(t.x-B.minX);
+    const ly=transposed?(t.x-B.minX):(t.y-B.minY);
+    const px=lx/2*TW - t.z*4, py=ly/2*TH - t.z*5;
     const tf=`translate3d(${px}px,${py}px,${t.z*TD}px)`;
     t.el.style.setProperty('--tf',tf);
     t.el.style.transform=tf;
-    t.el.style.zIndex=t.z*1000 + Math.round(t.y*10) + Math.round(t.x/2);
+    t.el.style.zIndex=t.z*1000 + Math.round(ly*10) + Math.round(lx/2);
   });
-  fitBoard(W,H);
-  return tiles;
+  const g=$('boardGlow');
+  g.style.width=(W*scale*1.25)+'px'; g.style.height=(H*scale*tilt*1.25)+'px';
+  g.style.marginTop=(-(botR-topR)/2)+'px';
 }
-function fitBoard(W,H){
-  const stage=$('stage'), pad=28;
-  const availW=stage.clientWidth-pad*2, availH=stage.clientHeight-170;
-  const sc=Math.min(availW/W, availH/(H*0.94), 1.35);
-  $('board').style.transform=`rotateX(24deg) scale(${sc})`;
-}
-window.addEventListener('resize',()=>{ if(G){ const b=$('board'); fitBoard(parseFloat(b.style.width),parseFloat(b.style.height)); } });
+window.addEventListener('resize',layoutTiles);
 
 /* ---------- LOGIQUE DE PARTIE ---------- */
 function newGame(){
   const rule=RULES[curRule];
-  G={ tiles:buildBoard(), sel:null, score:0, combo:0, lastMatch:0,
+  applyTileDims();
+  G={ mode:rule.mode, tiles:null, sel:null, score:0, combo:0, lastMatch:0,
       hints:rule.hints, shuffles:rule.shuffles, undos:rule.undos,
       time: rule.time||0, countdown: !!rule.time, elapsed:0,
-      history:[], over:false, paused:false, t0:Date.now() };
+      tray:[], history:[], over:false, paused:false };
+  G.tiles=buildBoard(G.mode);
+  $('tray').classList.toggle('on',G.mode==='triple');
+  $('hudPairsLab').textContent=G.mode==='triple'?'Tuiles':'Paires';
+  renderTray();
   updateLocks(); updateHUD(); SFX.deal();
   clearInterval(G._iv);
   G._iv=setInterval(tick,1000);
@@ -599,30 +777,38 @@ function tick(){
   updateHUD();
 }
 function fmt(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function aliveTiles(){ return G.tiles.filter(t=>!t.dead); }
 function updateHUD(){
   $('hudTime').textContent=fmt(G.countdown?G.time:G.elapsed);
   $('hudTime').style.color=(G.countdown&&G.time<60)?'var(--danger)':'';
-  $('hudPairs').textContent=G.tiles.filter(t=>!t.dead).length/2;
+  const n=aliveTiles().length;
+  $('hudPairs').textContent=G.mode==='triple'?n:(n/2);
   $('hudScore').textContent=G.score;
   const inf=v=>v===Infinity?'∞':v;
   $('undoCnt').textContent=inf(G.undos); $('hintCnt').textContent=inf(G.hints); $('shufCnt').textContent=inf(G.shuffles);
-  $('undoBtn').disabled=!G.history.length||G.undos<=0;
+  $('undoBtn').disabled=!canUndo();
   $('hintBtn').disabled=G.hints<=0; $('shufBtn').disabled=G.shuffles<=0;
+}
+function canUndo(){
+  if(G.undos<=0) return false;
+  return G.mode==='triple'?G.tray.length>0:G.history.length>0;
 }
 function updateLocks(){
   G.tiles.forEach(t=>{ if(t.dead) return;
     t.el.classList.toggle('locked',!isFree(t,G.tiles));
   });
 }
-function canMatch(a,b){ return a!==b && a.key===b.key; }
 function onTile(t){
   if(!G||G.over||G.paused||t.dead) return;
   if(!isFree(t,G.tiles)){ SFX.bad(); t.el.classList.remove('shake'); void t.el.offsetWidth; t.el.classList.add('shake'); return; }
+  if(G.mode==='triple'){ trayAdd(t); return; }
   if(G.sel===t){ t.el.classList.remove('sel'); G.sel=null; SFX.tap(); return; }
-  if(G.sel && canMatch(G.sel,t)){ doMatch(G.sel,t); return; }
+  if(G.sel && G.sel.key===t.key){ doMatch(G.sel,t); return; }
   if(G.sel){ G.sel.el.classList.remove('sel'); SFX.bad(); }
   G.sel=t; t.el.classList.add('sel'); SFX.select();
 }
+
+/* ----- mode paires ----- */
 function doMatch(a,b){
   a.el.classList.remove('sel');
   a.dead=b.dead=true;
@@ -630,67 +816,162 @@ function doMatch(a,b){
   G.history.push([a,b]);
   const now=Date.now();
   G.combo=(now-G.lastMatch<4000)?G.combo+1:1; G.lastMatch=now;
-  const base=curRule==='chrono'?15:10;
-  const pts=base+(G.combo-1)*5;
+  const pts=(curRule==='chrono'?15:10)+(G.combo-1)*5;
   G.score+=pts; G.sel=null;
   SFX.match();
   burst(a.el); burst(b.el);
-  if(G.combo>=3) toast('Combo ×'+G.combo+' ! +'+pts);
+  floatPts(b.el,'+'+pts);
+  if(G.combo>=3) toast('Combo ×'+G.combo+' !');
   updateLocks(); updateHUD();
-  const left=G.tiles.filter(t=>!t.dead);
-  if(!left.length){ gameWin(); return; }
+  if(!aliveTiles().length){ gameWin(); return; }
   if(!hasMove()){
-    if(curRule==='zen'||G.shuffles>0){ $('loseMsg').textContent='Plus aucun coup possible… mais il vous reste un mélange !'; $('loseOv').classList.add('on'); }
+    if(G.shuffles>0){ showLose('Bloqué…','Plus aucun coup possible… mais il vous reste un mélange !','🔀 Mélanger et continuer',()=>{ hideLose(); useShuffle(); }); }
     else gameLose('Plus aucun coup possible.');
   }
 }
 function freePairs(){
-  const free=G.tiles.filter(t=>!t.dead&&isFree(t,G.tiles));
+  const free=aliveTiles().filter(t=>isFree(t,G.tiles));
   const out=[];
   for(let i=0;i<free.length;i++) for(let j=i+1;j<free.length;j++)
     if(free[i].key===free[j].key) out.push([free[i],free[j]]);
   return out;
 }
 function hasMove(){ return freePairs().length>0; }
+
+/* ----- mode Triplettes ----- */
+function trayTileDims(){
+  const S=IMGSETS[tileset], ar=S?S.ratio:44/58;
+  return ar>=1?[50,Math.round(50/ar)]:[Math.round(54*ar),54];
+}
+function renderTray(){
+  const tr=$('tray'); tr.innerHTML='';
+  const [w,h]=trayTileDims();
+  for(let i=0;i<7;i++){
+    const s=document.createElement('div'); s.className='slot';
+    if(G.tray[i]) s.innerHTML=`<div class="ttile" style="position:relative;width:${w}px;height:${h}px;--tile-w:${w}px;--tile-h:${h}px;">${faceHTML(G.tray[i].key,G.tray[i].face)}</div>`;
+    tr.appendChild(s);
+  }
+  tr.classList.toggle('danger',G.tray.length>=6);
+}
+function trayAdd(t){
+  if(G.tray.length>=7) return;
+  SFX.place();
+  const r=t.el.getBoundingClientRect();
+  const slotIdx=G.tray.length;
+  t.dead=true; t.el.style.visibility='hidden';
+  G.tray.push({key:t.key,face:t.face,tile:t});
+  const trayR=$('tray').getBoundingClientRect();
+  const [w2,h2]=trayTileDims();
+  const sx=trayR.left+8+slotIdx*57+(52-w2)/2, sy=trayR.top+8+(58-h2)/2;
+  const fly=document.createElement('div'); fly.className='fly';
+  fly.style.cssText=`left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
+  fly.innerHTML=faceHTML(t.key,t.face);
+  document.body.appendChild(fly);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    fly.style.left=sx+'px'; fly.style.top=sy+'px';
+    fly.style.width=w2+'px'; fly.style.height=h2+'px';
+  }));
+  setTimeout(()=>{ fly.remove(); afterTrayAdd(); },430);
+  updateLocks(); updateHUD();
+}
+function afterTrayAdd(){
+  renderTray();
+  const cnt={};
+  G.tray.forEach(e=>cnt[e.key]=(cnt[e.key]||0)+1);
+  const k=Object.keys(cnt).find(x=>cnt[x]>=3);
+  if(k){
+    const slots=$('tray').children;
+    let n=0;
+    G.tray.forEach((e,i)=>{ if(e.key===k&&n<3){ n++; const tt=slots[i].querySelector('.ttile'); if(tt) tt.classList.add('clearing'); } });
+    setTimeout(()=>{
+      let removed=0;
+      G.tray=G.tray.filter(e=>{ if(e.key===k&&removed<3){removed++;return false;} return true; });
+      const now=Date.now();
+      G.combo=(now-G.lastMatch<5000)?G.combo+1:1; G.lastMatch=now;
+      const pts=20+(G.combo-1)*8;
+      G.score+=pts;
+      SFX.triple();
+      const tr=$('tray').getBoundingClientRect();
+      burstAt(tr.left+tr.width/2,tr.top+tr.height/2);
+      floatPtsAt(tr.left+tr.width/2,tr.top-6,'+'+pts);
+      if(G.combo>=3) toast('Combo ×'+G.combo+' !');
+      renderTray(); updateHUD();
+      checkTripleEnd();
+    },380);
+  } else {
+    checkTripleEnd();
+  }
+}
+function checkTripleEnd(){
+  if(!aliveTiles().length&&!G.tray.length){ gameWin(); return; }
+  if(G.tray.length>=7){
+    if(G.undos>0) showLose('Rack plein !','Le rack déborde… Annulez le dernier coup pour vous en sortir ?','↩ Annuler le dernier coup',()=>{ hideLose(); useUndo(); });
+    else gameLose('Le rack est plein, plus aucune place.');
+  }
+}
+
+/* ----- outils ----- */
 function useHint(){
   if(G.hints<=0||G.over||G.paused) return;
-  const p=freePairs(); if(!p.length){ toast('Aucun coup — mélangez !'); return; }
+  let targets=[];
+  if(G.mode==='triple'){
+    const cnt={}; G.tray.forEach(e=>cnt[e.key]=(cnt[e.key]||0)+1);
+    const free=aliveTiles().filter(t=>isFree(t,G.tiles));
+    const t2=free.find(t=>cnt[t.key]===2);
+    if(t2) targets=[t2];
+    else{
+      const byKey={}; free.forEach(t=>{(byKey[t.key]=byKey[t.key]||[]).push(t);});
+      const k=Object.keys(byKey).find(k=>byKey[k].length+(cnt[k]||0)>=3);
+      if(k) targets=byKey[k].slice(0,3);
+    }
+  } else {
+    const p=freePairs(); if(p.length) targets=p[Math.floor(Math.random()*p.length)];
+  }
+  if(!targets.length){ toast('Aucun coup sûr — mélangez !'); return; }
   if(G.hints!==Infinity) G.hints--;
-  const [a,b]=p[Math.floor(Math.random()*p.length)];
-  [a,b].forEach(t=>{ t.el.classList.remove('hint'); void t.el.offsetWidth; t.el.classList.add('hint'); });
+  targets.forEach(t=>{ t.el.classList.remove('hint'); void t.el.offsetWidth; t.el.classList.add('hint'); });
   G.score=Math.max(0,G.score-5);
   SFX.hint(); updateHUD();
 }
-function useShuffle(fromLose){
+function useShuffle(){
   if(G.shuffles<=0||G.over) return;
   if(G.shuffles!==Infinity) G.shuffles--;
-  const alive=G.tiles.filter(t=>!t.dead);
-  const keys=alive.map(t=>({key:t.key,html:t.el.innerHTML}));
-  // remélange en garantissant au moins un coup
+  const alive=aliveTiles();
+  const bag=alive.map(t=>({key:t.key,face:t.face}));
   for(let tries=0;tries<40;tries++){
-    shuffleArr(keys);
-    alive.forEach((t,i)=>{ t.key=keys[i].key; });
-    if(hasMove()) break;
+    shuffleArr(bag);
+    alive.forEach((t,i)=>{ t.key=bag[i].key; t.face=bag[i].face; });
+    if(G.mode==='triple'||hasMove()) break;
   }
-  alive.forEach((t,i)=>{ t.el.innerHTML=keys[i].html;
+  alive.forEach((t,i)=>{ t.el.innerHTML=faceHTML(t.key,t.face);
     t.el.classList.add('dealing'); t.el.style.animationDelay=(i*6)+'ms';
-    setTimeout(()=>t.el.classList.remove('dealing'),800);
+    setTimeout(()=>t.el.classList.remove('dealing'),i*6+700);
   });
   G.score=Math.max(0,G.score-10);
   SFX.shuffle(); updateLocks(); updateHUD();
-  if(fromLose) $('loseOv').classList.remove('on');
-  if(!hasMove()) { if(G.shuffles>0||curRule==='zen') useShuffle(); else gameLose('Plus aucun coup possible.'); }
+  if(G.mode!=='triple'&&!hasMove()){
+    if(G.shuffles>0) useShuffle(); else gameLose('Plus aucun coup possible.');
+  }
 }
 function useUndo(){
-  if(!G.history.length||G.undos<=0||G.over||G.paused) return;
+  if(!canUndo()||G.over) return;
   if(G.undos!==Infinity) G.undos--;
-  const [a,b]=G.history.pop();
-  [a,b].forEach(t=>{ t.dead=false; t.el.classList.remove('gone');
-    t.el.classList.add('dealing'); setTimeout(()=>t.el.classList.remove('dealing'),600); });
+  if(G.mode==='triple'){
+    const e=G.tray.pop();
+    e.tile.dead=false; e.tile.el.style.visibility='';
+    e.tile.el.classList.add('dealing'); setTimeout(()=>e.tile.el.classList.remove('dealing'),600);
+    renderTray();
+  } else {
+    const [a,b]=G.history.pop();
+    [a,b].forEach(t=>{ t.dead=false; t.el.classList.remove('gone');
+      t.el.classList.add('dealing'); setTimeout(()=>t.el.classList.remove('dealing'),600); });
+  }
   G.score=Math.max(0,G.score-8); G.combo=0;
   SFX.tap(); updateLocks(); updateHUD();
-  $('loseOv').classList.remove('on');
+  hideLose();
 }
+
+/* ----- fin de partie ----- */
 function gameWin(){
   G.over=true; clearInterval(G._iv);
   let bonus=0;
@@ -701,20 +982,33 @@ function gameWin(){
   if(rec) store.set(bk,{score:G.score,time:G.elapsed});
   $('winTime').textContent=fmt(G.elapsed);
   $('winScore').textContent=G.score;
-  $('winMsg').textContent=(rec?'🏆 Nouveau record ! ':'')+(bonus?('Bonus temps : +'+bonus+' pts. '):'')+'Toutes les tuiles ont été appariées.';
+  $('winMsg').textContent=(rec?'🏆 Nouveau record ! ':'')+(bonus?('Bonus temps : +'+bonus+' pts. '):'')+'Plateau nettoyé de fond en comble.';
   SFX.win(); confetti();
   setTimeout(()=>$('winOv').classList.add('on'),700);
 }
+function showLose(title,msg,actLabel,actFn){
+  $('loseTitle').textContent=title;
+  $('loseMsg').textContent=msg;
+  const b=$('loseAct');
+  if(actLabel){ b.style.display=''; b.textContent=actLabel; b.onclick=actFn; }
+  else b.style.display='none';
+  $('loseOv').classList.add('on');
+}
+function hideLose(){ $('loseOv').classList.remove('on'); }
 function gameLose(msg){
   G.over=true; clearInterval(G._iv);
-  $('loseMsg').textContent=msg;
-  $('loseShuf').style.display='none';
   SFX.lose();
-  $('loseOv').classList.add('on');
+  showLose('Perdu…',msg,null,null);
 }
 function toast(msg){
   const t=$('toast'); t.textContent=msg; t.classList.add('show');
   clearTimeout(t._to); t._to=setTimeout(()=>t.classList.remove('show'),1400);
+}
+function floatPts(el,txt){ const r=el.getBoundingClientRect(); floatPtsAt(r.left+r.width/2,r.top,txt); }
+function floatPtsAt(x,y,txt){
+  const d=document.createElement('div'); d.className='floatpts'; d.textContent=txt;
+  d.style.left=x+'px'; d.style.top=y+'px';
+  document.body.appendChild(d); setTimeout(()=>d.remove(),1050);
 }
 
 /* ---------- PARTICULES ---------- */
@@ -723,8 +1017,8 @@ let parts=[];
 function sizeFx(){ fx.width=innerWidth; fx.height=innerHeight; }
 sizeFx(); window.addEventListener('resize',sizeFx);
 function accentColor(){ return getComputedStyle(document.body).getPropertyValue('--accent').trim(); }
-function burst(el){
-  const r=el.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+function burst(el){ const r=el.getBoundingClientRect(); burstAt(r.left+r.width/2,r.top+r.height/2); }
+function burstAt(cx,cy){
   const col=accentColor();
   for(let i=0;i<16;i++){ const a=Math.random()*6.28, sp=2+Math.random()*4;
     parts.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2,l:1,c:col,s:2+Math.random()*3}); }
@@ -765,7 +1059,7 @@ function refreshBest(){
   $('bestLine').textContent=b?`Record ${LAYOUTS[curLayout].name} · ${RULES[curRule].name} — ${b.score} pts en ${fmt(b.time)}`:'';
 }
 
-/* ---------- CONSTRUCTION DES MENUS ---------- */
+/* ---------- MENUS ---------- */
 function buildChips(){
   const lc=$('layoutChips'); lc.innerHTML='';
   Object.entries(LAYOUTS).forEach(([id,l])=>{
@@ -794,35 +1088,46 @@ function buildThemes(){
       g.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('sel')); b.classList.add('sel'); };
     g.appendChild(b);
   });
+  const tg=$('tilesetGrid'); tg.innerHTML='';
+  TILESETS.forEach(t=>{
+    const b=document.createElement('button'); b.className='theme-card'+(t.id===tileset?' sel':'');
+    b.innerHTML=`<span class="swatch" style="background:rgba(255,255,255,.08)">${t.icon}</span><span><b>${t.name}</b><small>${t.desc}</small></span>`;
+    b.onclick=()=>{ tileset=t.id; store.set('tileset',t.id); SFX.select();
+      applyTileDims();
+      const S=IMGSETS[t.id];
+      if(S&&S.theme){ document.body.dataset.theme=S.theme; store.set('theme',S.theme); }
+      buildThemes();
+      if(G&&G.tiles){ aliveTiles().forEach(x=>x.el.innerHTML=faceHTML(x.key,x.face)); renderTray(); layoutTiles(); } };
+    tg.appendChild(b);
+  });
 }
 
 /* ---------- ÉVÉNEMENTS ---------- */
-$('playBtn').onclick=()=>{ ac()&&ac().resume&&ac().resume(); SFX.tap(); show('game'); newGame(); applyMusic(); };
+$('playBtn').onclick=()=>{ const c=ac(); if(c&&c.resume)c.resume(); SFX.tap(); show('game'); newGame(); applyMusic(); };
 $('tutoBtn').onclick=()=>{ SFX.tap(); show('tuto'); };
 $('setBtn').onclick=()=>{ SFX.tap(); show('settings'); };
-$('homeBtn').onclick=()=>{ SFX.tap(); if(G&&!G.over){ G.paused=true; $('pauseInfo').textContent=`${LAYOUTS[curLayout].name} · ${RULES[curRule].name} — ${$('hudPairs').textContent} paires restantes`; $('pauseOv').classList.add('on'); } else show('home'); };
+$('homeBtn').onclick=()=>{ SFX.tap(); if(G&&!G.over){ G.paused=true; $('pauseInfo').textContent=`${LAYOUTS[curLayout].name} · ${RULES[curRule].name}`; $('pauseOv').classList.add('on'); } else show('home'); };
 $('resumeBtn').onclick=()=>{ G.paused=false; $('pauseOv').classList.remove('on'); SFX.tap(); };
 $('restartBtn').onclick=()=>{ $('pauseOv').classList.remove('on'); SFX.tap(); newGame(); };
 $('quitBtn').onclick=()=>{ $('pauseOv').classList.remove('on'); clearInterval(G._iv); G=null; SFX.tap(); show('home'); };
 $('undoBtn').onclick=useUndo;
 $('hintBtn').onclick=useHint;
-$('shufBtn').onclick=()=>useShuffle(false);
+$('shufBtn').onclick=()=>useShuffle();
 $('winAgain').onclick=()=>{ $('winOv').classList.remove('on'); newGame(); };
 $('winHome').onclick=()=>{ $('winOv').classList.remove('on'); G=null; show('home'); };
-$('loseShuf').onclick=()=>useShuffle(true);
-$('loseAgain').onclick=()=>{ $('loseOv').classList.remove('on'); $('loseShuf').style.display=''; newGame(); };
-$('loseHome').onclick=()=>{ $('loseOv').classList.remove('on'); $('loseShuf').style.display=''; G=null; show('home'); };
+$('loseAgain').onclick=()=>{ hideLose(); newGame(); };
+$('loseHome').onclick=()=>{ hideLose(); G=null; show('home'); };
 document.querySelectorAll('.tuto-tab').forEach(b=>b.onclick=()=>{
   SFX.tap();
   document.querySelectorAll('.tuto-tab').forEach(c=>c.classList.remove('sel')); b.classList.add('sel');
-  ['t1','t2','t3'].forEach(id=>$(id).style.display=(id===b.dataset.tab)?'':'none');
+  ['t1','t2','t3','t4'].forEach(id=>$(id).style.display=(id===b.dataset.tab)?'':'none');
 });
 $('sfxSwitch').classList.toggle('on',sfxOn);
 $('sfxSwitch').onclick=function(){ sfxOn=!sfxOn; store.set('sfx',sfxOn); this.classList.toggle('on',sfxOn); SFX.select(); };
 $('musicSwitch').classList.toggle('on',musicOn);
 $('musicSwitch').onclick=function(){ musicOn=!musicOn; store.set('music',musicOn); this.classList.toggle('on',musicOn); applyMusic(); };
 
-/* Bouton retour Android : renvoyé par MainActivity */
+/* Bouton retour Android */
 window.handleBack=function(){
   if(curScreen==='game'){
     if($('pauseOv').classList.contains('on')){ $('pauseOv').classList.remove('on'); if(G) G.paused=false; return 'stay'; }
